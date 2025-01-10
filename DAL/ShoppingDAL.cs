@@ -12,15 +12,15 @@ namespace DAL
     public class ShoppingDAL
     {
         private string _connectionString = "server=.;integrated security=true;database=CDB";
-        DataSet ds = new DataSet();
+        //DataSet ds = new DataSet();
         public int RegisterUser(string name, string username, string password, string confirmpassword, string mobile)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                string query = "SELECT * FROM Registration WHERE Username=@Username"; 
+                string query = "SELECT * FROM Registration WHERE 1=0"; 
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                //SqlCommandBuilder builder = new SqlCommandBuilder(da);
-                //DataSet ds = new DataSet();
+                SqlCommandBuilder builder = new SqlCommandBuilder(da);
+                DataSet ds = new DataSet();
                 da.Fill(ds, "Registration");
                 DataRow newRow = ds.Tables["Registration"].NewRow();
                 newRow["Name"] = name;
@@ -49,7 +49,7 @@ namespace DAL
                 da.SelectCommand.Parameters.AddWithValue("@Username", username);
                 da.SelectCommand.Parameters.AddWithValue("@Password", password);
 
-                //DataSet ds = new DataSet();
+                DataSet ds = new DataSet();
                 da.Fill(ds, "Registration");
 
                 return ds.Tables["Registration"].Rows.Count > 0;
