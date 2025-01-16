@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,19 @@ namespace BAL
         {
             return _shoppingCartDAL.ValidateLogin(username, password);
         }
+        public DataTable GetProducts()
+        {
+            return _shoppingCartDAL.GetProducts();
+        }
+        public DataTable GetProductPrice(int productId)
+        {
+            return _shoppingCartDAL.GetProductPrice(productId);
+        }
+        public DataRow GetProductById(int productId) 
+        {
+            return _shoppingCartDAL.GetProductById(productId); 
+        }
+
 
 
 
