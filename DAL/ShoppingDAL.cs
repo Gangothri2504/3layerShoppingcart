@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +20,7 @@ namespace DAL
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                string query = "select * from Registration"; 
+                string query = "select * from Registration";
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 SqlCommandBuilder builder = new SqlCommandBuilder(da);
                 DataTable dt = new DataTable();
@@ -42,10 +43,11 @@ namespace DAL
                 //{
                 //    result = 1;
                 //}
+                //return result;
                 dt.Rows.Add(newRow);
                 return da.Update(dt);
-                //return result;
-                    
+                
+
                 //if (ds.HasChanges())
                 //{
                 //    da.Update(ds.Tables["Employee"]);
@@ -82,38 +84,79 @@ namespace DAL
                 return dt;
             }
         }
-        public DataRow GetProductById(int productId) 
-        { 
-            DataTable dt = new DataTable(); 
-            using (SqlConnection connection = new SqlConnection(_connectionString)) 
-            { 
-                string query = "SELECT * FROM Products WHERE ProductID = @ProductId"; 
-                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
-                adapter.SelectCommand.Parameters.AddWithValue("@ProductId", productId); 
-                adapter.Fill(dt); 
-            }
-            if (dt.Rows.Count > 0) { 
-                return dt.Rows[0]; 
-            } 
-            return null; 
-        }
-        public DataTable GetProductPrice(int productId)
+        public List<DataRow> GetProductById(int productId)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                string query = "SELECT * from Products WHERE ProductID = @ProductID";
-                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                string query = "SELECT * FROM Products WHERE ProductID = @ProductID";
+                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                 adapter.SelectCommand.Parameters.AddWithValue("@ProductID", productId);
-                DataTable productTable = new DataTable();
-                adapter.Fill(productTable);
-                return productTable;
+
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+
+                List<DataRow> rows = new List<DataRow>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    rows.Add(row);
+                }
+                return rows;
+                //if (dt.Rows.Count > 0)
+                //{
+                //    return dt.AsEnumerable().ToList(); // Convert rows to a list for disconnected usage
+                //}
+                //return null;
             }
         }
-        //public int AddToCart()
-        
-        //{
+        public bool UpdateProductQuantity(DataTable products, int productId, int newQuantity)
+        {
+            try
+            {
+                DataRow row = products.Select($"ProductID = {productId}").FirstOrDefault();
+                if (row != null)
+                {
+                    row["Quantity"] = newQuantity;
 
+                    using (SqlConnection connection = new SqlConnection(_connectionString))
+                    {
+                        string query = "SELECT * FROM Products"; 
+                        SqlDataAdapter adapter = new SqlDataAdapter(query, connection);     
+                        SqlCommandBuilder commandBuilder = new SqlCommandBuilder(adapter);
+                        adapter.Update(products);
+                        return true;
+                    }
+                }
+            }
+            
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            return false;
+        }
+
+        //public void UpdateProductQuantity(int productId, int newQuantity)
+        //{
+        //    using (SqlConnection connection = new SqlConnection(_connectionString))
+        //    {
+        //        string query = "SELECT * FROM Products WHERE ProductID = @ProductID";
+        //        SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+        //        SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
+        //        adapter.SelectCommand.Parameters.AddWithValue("@ProductID", productId);
+        //        adapter.SelectCommand.Parameters.AddWithValue("@NewQuantity", newQuantity);
+        //        DataTable dt = new DataTable();
+        //        adapter.Fill(dt);
+        //        if (dt.Rows.Count > 0)
+        //        { 
+        //            dt.Rows[0]["Quantity"] = newQuantity;
+        //            //SqlCommandBuilder commandBuilder = new SqlCommandBuilder(adapter);
+        //            adapter.Update(dt);
+        //        }
+        //        //adapter.Update("Products");
+        //    }
         //}
+
+
 
 
     }

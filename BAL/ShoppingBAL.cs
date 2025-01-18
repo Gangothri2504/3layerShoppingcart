@@ -28,14 +28,26 @@ namespace BAL
         {
             return _shoppingCartDAL.GetProducts();
         }
-        public DataTable GetProductPrice(int productId)
+        public List<DataRow> GetProductById(int productId)
         {
-            return _shoppingCartDAL.GetProductPrice(productId);
+            return _shoppingCartDAL.GetProductById(productId);
         }
-        public DataRow GetProductById(int productId) 
+        //public bool UpdateProductQuantity(DataTable productsTable, int productId, int newQuantity)
+        //{
+        //    return _shoppingCartDAL.UpdateProductQuantity(productsTable, productId, newQuantity);
+        //}
+        public bool UpdateProductQuantity(DataTable products,int productId, int newQuantity)
         {
-            return _shoppingCartDAL.GetProductById(productId); 
+           return  _shoppingCartDAL.UpdateProductQuantity(products,productId, newQuantity);
         }
+        //public DataTable GetProductPrice(int productId)
+        //{
+        //    return _shoppingCartDAL.GetProductPrice(productId);
+        //}
+        //public DataRow GetProductById(int productId) 
+        //{
+        //    return _shoppingCartDAL.GetProductById(productId); 
+        //}
 
 
 
